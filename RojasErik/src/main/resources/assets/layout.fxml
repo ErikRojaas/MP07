@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DialogPane?>
+<?import javafx.scene.effect.Blend?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="pane1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-border-color: grey; -fx-border-width: 4; -fx-background-color: dimgrey;" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.Controller">
+   <children>
+      <DialogPane fx:id="barra" layoutX="106.0" layoutY="19.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="61.0" prefWidth="402.0" style="-fx-border-color: darkgray; -fx-border-width: 2; -fx-background-color: lemonchiffon;">
+         <effect>
+            <Blend />
+         </effect>
+      </DialogPane>
+      <Button fx:id="button1" layoutX="65.0" layoutY="87.0" mnemonicParsing="false" onAction="#handleNumberButtonAction" prefHeight="75.0" prefWidth="94.0" style="-fx-background-color: white; -fx-border-color: darkgray; -fx-border-width: 2;" text="1">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
+      <Button fx:id="button2" layoutX="159.0" layoutY="87.0" mnemonicParsing="false" onAction="#handleNumberButtonAction" prefHeight="75.0" prefWidth="94.0" style="-fx-background-color: white; -fx-border-color: darkgray; -fx-border-width: 2;" text="2">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
+      <Button fx:id="button3" layoutX="253.0" layoutY="87.0" mnemonicParsing="false" onAction="#handleNumberButtonAction" prefHeight="75.0" prefWidth="94.0" style="-fx-background-color: white; -fx-border-color: darkgray; -fx-border-width: 2;" text="3">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
+      <Button fx:id="buttonMas" layoutX="347.0" layoutY="87.0" mnemonicParsing="false" onAction="#handleOperatorButtonAction" prefHeight="75.0" prefWidth="94.0" style="-fx-background-color: white; -fx-border-color: darkgray; -fx-border-width: 2;" text="+">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
+      <Button fx:id="buttonBorrar" layoutX="441.0" layoutY="87.0" mnemonicParsing="false" onAction="#handleDeleteButtonAction" prefHeight="75.0" prefWidth="94.0" style="-fx-background-color: red; -fx-border-color: pink; -fx-border-width: 2;" text="DEL" textFill="WHITE">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
+      <Button fx:id="button4" layoutX="65.0" layoutY="162.0" mnemonicParsing="false" onAction="#handleNumberButtonAction" prefHeight="75.0" prefWidth="94.0" style="-fx-background-color: white; -fx-border-color: darkgray; -fx-border-width: 2;" text="4">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
+      <Button fx:id="button5" layoutX="159.0" layoutY="162.0" mnemonicParsing="false" onAction="#handleNumberButtonAction" prefHeight="75.0" prefWidth="94.0" style="-fx-background-color: white; -fx-border-color: darkgray; -fx-border-width: 2;" text="5">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
+      <Button fx:id="button6" layoutX="253.0" layoutY="162.0" mnemonicParsing="false" onAction="#handleNumberButtonAction" prefHeight="75.0" prefWidth="94.0" style="-fx-background-color: white; -fx-border-color: darkgray; -fx-border-width: 2;" text="6">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
+      <Button fx:id="buttonMenos" layoutX="347.0" layoutY="162.0" mnemonicParsing="false" onAction="#handleOperatorButtonAction" prefHeight="75.0" prefWidth="94.0" style="-fx-background-color: white; -fx-border-color: darkgray; -fx-border-width: 2;" text="-">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
+      <Button fx:id="buttonC" layoutX="441.0" layoutY="162.0" mnemonicParsing="false" onAction="#handleClearButtonAction" prefHeight="75.0" prefWidth="94.0" style="-fx-background-color: green; -fx-border-color: lightgreen; -fx-border-width: 2;" text="C" textFill="WHITE">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
+      <Button fx:id="button7" layoutX="65.0" layoutY="237.0" mnemonicParsing="false" onAction="#handleNumberButtonAction" prefHeight="75.0" prefWidth="94.0" style="-fx-background-color: white; -fx-border-color: darkgray; -fx-border-width: 2;" text="7">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
+      <Button fx:id="button8" layoutX="159.0" layoutY="237.0" mnemonicParsing="false" onAction="#handleNumberButtonAction" prefHeight="75.0" prefWidth="94.0" style="-fx-background-color: white; -fx-border-color: darkgray; -fx-border-width: 2;" text="8">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
+      <Button fx:id="button9" layoutX="253.0" layoutY="237.0" mnemonicParsing="false" onAction="#handleNumberButtonAction" prefHeight="75.0" prefWidth="94.0" style="-fx-background-color: white; -fx-border-color: darkgray; -fx-border-width: 2;" text="9">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
+      <Button fx:id="buttonMulti" layoutX="347.0" layoutY="237.0" mnemonicParsing="false" onAction="#handleOperatorButtonAction" prefHeight="75.0" prefWidth="94.0" style="-fx-background-color: white; -fx-border-color: darkgray; -fx-border-width: 2;" text="X">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
+      <Button fx:id="buttonIgual" layoutX="441.0" layoutY="311.0" mnemonicParsing="false" onAction="#handleEqualsButtonAction" prefHeight="75.0" prefWidth="94.0" style="-fx-background-color: lightyellow; -fx-border-color: yellow; -fx-border-width: 2;" text="=">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
+      <Button fx:id="button0" layoutX="159.0" layoutY="312.0" mnemonicParsing="false" onAction="#handleNumberButtonAction" prefHeight="75.0" prefWidth="94.0" style="-fx-background-color: white; -fx-border-color: darkgray; -fx-border-width: 2;" text="0">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
+      <Button fx:id="buttonDiv" layoutX="441.0" layoutY="237.0" mnemonicParsing="false" onAction="#handleOperatorButtonAction" prefHeight="75.0" prefWidth="94.0" style="-fx-background-color: white; -fx-border-color: darkgray; -fx-border-width: 2;" text="÷">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
+   </children>
+</AnchorPane>
