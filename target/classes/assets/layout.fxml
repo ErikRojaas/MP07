@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.DesktopController">
+    <top>
+        <HBox alignment="CENTER" style="-fx-background-color: #2196F3;">
+            <Label style="-fx-text-fill: white; -fx-font-size: 20px;" text="Nintendo DB" />
+        </HBox>
+    </top>
+
+    <left>
+        <VBox alignment="CENTER" fillWidth="true" spacing="10">
+            <ChoiceBox fx:id="categoryChoiceBox" maxWidth="200" />
+            <ListView fx:id="itemListView" prefWidth="200" />
+        </VBox>
+    </left>
+    
+    <center>
+        <VBox alignment="CENTER" fillWidth="true" spacing="10">
+            <ImageView fx:id="itemImageView" fitHeight="200" fitWidth="200" preserveRatio="true" />
+            <Text fx:id="itemDescriptionTitle" style="-fx-font-size: 19px; -fx-text-alignment: center; -fx-font-weight: bold;" textAlignment="CENTER" />
+            <Text fx:id="itemDescription" style="-fx-font-size: 14px; -fx-text-alignment: center;" textAlignment="CENTER" />
+        </VBox>
+    </center>
+</BorderPane>
+
+
