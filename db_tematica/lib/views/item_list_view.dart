@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'item_detail_view.dart';
 
 class ItemListView extends StatefulWidget {
-  const ItemListView({super.key});
+  final String category;
+
+  const ItemListView({required this.category, super.key});
 
   @override
   _ItemListViewState createState() => _ItemListViewState();
