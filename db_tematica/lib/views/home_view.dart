@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'category_view.dart';
+import 'package:flutter/material.dart';
+import 'item_list_view.dart';
 
 class HomeView extends StatelessWidget {
   @override
@@ -7,9 +8,9 @@ class HomeView extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         if (constraints.maxWidth > 600) {
-          return ViewDesktop();  // Vista para escritorio
+          return ItemListView();  // Vista para escritorio
         } else {
-          return ViewMobile();  // Vista para móvil
+          return ItemListView();  // Vista para móvil
         }
       },
     );

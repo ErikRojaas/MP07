@@ -7,25 +7,16 @@ class ItemDetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        middle: Text(name),
-        automaticallyImplyLeading: true,  // Este agrega el botón de retroceso automáticamente
-      ),
-      child: SafeArea(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset('assets/$name.png'),  // Aquí se espera una imagen con el nombre del item
-              Text(
-                'Description for $name', // Aquí puedes poner una descripción del item
-                style: TextStyle(fontSize: 18),
-              ),
-            ],
-          ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Image.asset('assets/$name.png', width: 200, height: 200),  // Aumentar el tamaño de la imagen
+        SizedBox(height: 16),
+        Text(
+          'Descripción de $name',  // Aquí puedes poner una descripción del ítem
+          style: TextStyle(fontSize: 18),
         ),
-      ),
+      ],
     );
   }
 }

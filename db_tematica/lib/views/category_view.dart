@@ -1,20 +1,25 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'item_list_view.dart';
+
+const List<String> categories = <String>['Stadiums', 'Game Modes', 'Cars'];
 
 class ViewMobile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        middle: Text('Categorias'),
+    return MaterialApp(
+      theme: ThemeData(
+        useMaterial3: true,
+        scaffoldBackgroundColor: Colors.black87,
       ),
-      child: SafeArea(
-        child: ListView(
-          children: [
-            CategoryItem(title: 'Stadiums'),
-            CategoryItem(title: 'Game Modes'),
-            CategoryItem(title: 'Cars'),
-          ],
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Categorias'),
+          titleTextStyle: TextStyle(fontSize: 30, color: Colors.white),
+          backgroundColor: Colors.black,
+        ),
+        body: const Center(
+          child: CategoryDropdown(isMobile: true),
         ),
       ),
     );
@@ -24,58 +29,77 @@ class ViewMobile extends StatelessWidget {
 class ViewDesktop extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        middle: Text('Categorias'),
+    return MaterialApp(
+      theme: ThemeData(
+        useMaterial3: true,
+        scaffoldBackgroundColor: Colors.black87,
       ),
-      child: SafeArea(
-        child: Row(
-          children: [
-            Expanded(child: CategoryItem(title: 'Stadiums')),
-            Expanded(child: CategoryItem(title: 'Game Modes')),
-            Expanded(child: CategoryItem(title: 'Cars')),
-          ],
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Categorias'),
+          titleTextStyle: TextStyle(fontSize: 60, color: Colors.white),
+          toolbarHeight: 100,
+          backgroundColor: Colors.black,
+        ),
+        body: const Center(
+          child: CategoryDropdown(isMobile: false),
         ),
       ),
     );
   }
 }
 
-class CategoryItem extends StatelessWidget {
-  final String title;
+class CategoryDropdown extends StatefulWidget {
+  final bool isMobile;
+  const CategoryDropdown({required this.isMobile, super.key});
 
-  const CategoryItem({required this.title, super.key});
+  @override
+  _CategoryDropdownState createState() => _CategoryDropdownState();
+}
+
+class _CategoryDropdownState extends State<CategoryDropdown> {
+  static final List<DropdownMenuEntry<String>> menuEntries = categories
+      .map<DropdownMenuEntry<String>>(
+          (String name) => DropdownMenuEntry(value: name, label: name))
+      .toList();
+
+  String? _selectedCategory = categories.first;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          CupertinoPageRoute(
-            builder: (context) => ItemListView(category: title),
-          ),
-        );
-      },
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          // Si la pantalla es ancha (mayor a 600px), centrar el texto (escritorio)
-          // Si la pantalla es estrecha (menos de 600px), alinearlo a la derecha (móvil)
-          bool isMobile = constraints.maxWidth < 600;
-
-          return Container(
-            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-            alignment: isMobile ? Alignment.centerRight : Alignment.center,
-            child: Text(
-              title,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: isMobile ? TextAlign.right : TextAlign.center,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 200.0),
+      child: Align(
+        alignment: Alignment.center,
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width * (widget.isMobile ? 0.6 : 0.8),
+          child: DropdownMenu<String>(
+            initialSelection: _selectedCategory,
+            onSelected: (String? value) {
+              setState(() {
+                _selectedCategory = value;
+              });
+              if (value != null) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ItemListView(category: value),
+                  ),
+                );
+              }
+            },
+            dropdownMenuEntries: menuEntries,
+            textStyle: TextStyle(fontSize: widget.isMobile ? 30 : 50, color: Colors.white),
+            menuStyle: MenuStyle(
+              backgroundColor: MaterialStateProperty.all(Colors.yellow),
+              side: MaterialStateProperty.all(BorderSide(color: Colors.yellow, width: 2.0)),
+              surfaceTintColor: MaterialStateProperty.all(Colors.yellow.withOpacity(0.2)),
             ),
-          );
-        },
+            width: widget.isMobile ? 400 : 600,
+            menuHeight: widget.isMobile ? 400 : 600,
+          ),
+        ),
       ),
     );
   }
