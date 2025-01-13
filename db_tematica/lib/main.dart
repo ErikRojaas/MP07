@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:provider/provider.dart';
+import 'app_data.dart'; // Importa tu clase AppData.
 
-void main() => runApp(const RocketLeagueDBApp()); // Ejecuta el widget principal.
+void main() => runApp(
+      ChangeNotifierProvider(
+        create: (_) => AppData()..fetchCategories(), // Inicializa AppData y carga las categorías.
+        child: const RocketLeagueDBApp(),
+      ),
+    );
 
 class RocketLeagueDBApp extends StatelessWidget {
   const RocketLeagueDBApp({super.key});
@@ -11,127 +16,57 @@ class RocketLeagueDBApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(useMaterial3: true),
-      debugShowCheckedModeBanner: false, // Desactiva el banner de depuración.
-      home: const HomePage(), // Página inicial de la aplicación.
+      debugShowCheckedModeBanner: false,
+      home: const HomePage(),
     );
   }
 }
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
-  _HomePageState createState() => _HomePageState();
-}
-
-typedef MenuEntry = DropdownMenuEntry<String>;
-
-class _HomePageState extends State<HomePage> {
-  List<String> categories = []; // Lista de categorías obtenidas desde la API.
-  String? selectedCategory; // Categoría seleccionada por el usuario.
-  List<Map<String, dynamic>> items = []; // Lista de elementos de la categoría seleccionada.
-  Map<String, dynamic>? selectedItem; // Elemento seleccionado para mostrar detalles.
-
-  @override
-  void initState() {
-    super.initState();
-    fetchCategories(); // Llama a la API para obtener las categorías al inicio.
-  }
-
-  // Función para obtener las categorías desde la API.
-  Future<void> fetchCategories() async {
-    final response = await http.get(Uri.parse('http://localhost:3000/api/categories'));
-
-    if (response.statusCode == 200) {
-      setState(() {
-        categories = List<String>.from(json.decode(response.body)); // Decodifica la respuesta JSON y la guarda en 'categories'.
-        selectedCategory = categories.isNotEmpty ? categories.first : null; // Establece la primera categoría si está disponible.
-        if (selectedCategory != null) fetchItems(selectedCategory!); // Obtiene los ítems de la categoría seleccionada.
-      });
-    } else {
-      print('Error fetching categories: ${response.statusCode}');
-    }
-  }
-
-  // Función para obtener los ítems de una categoría desde la API.
-  Future<void> fetchItems(String category) async {
-    final response = await http.get(Uri.parse('http://localhost:3000/api/items/$category'));
-
-    if (response.statusCode == 200) {
-      setState(() {
-        items = List<Map<String, dynamic>>.from(json.decode(response.body)); // Actualiza la lista de ítems.
-        selectedItem = null; // Limpia la selección de ítem.
-      });
-    } else {
-      print('Error fetching items: ${response.statusCode}');
-    }
-  }
-
-  // Función para obtener los detalles de un ítem específico.
-  Future<void> fetchItemDetails(int id) async {
-    final response = await http.get(Uri.parse('http://localhost:3000/api/items/id/$id'));
-
-    if (response.statusCode == 200) {
-      setState(() {
-        selectedItem = json.decode(response.body); // Guarda los detalles del ítem seleccionado.
-      });
-    } else {
-      print('Error fetching item details: ${response.statusCode}');
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final isMobile = MediaQuery.of(context).size.width < 600; // Detecta si la pantalla es móvil o escritorio.
+    final isMobile = MediaQuery.of(context).size.width < 600;
+    final appData = Provider.of<AppData>(context);
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.deepPurple, // Color de fondo de la barra superior.
+        backgroundColor: Colors.deepPurple,
         title: const Text(
-          'Rocket League DB', // Título de la app.
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-          textAlign: TextAlign.center, // Centra el texto del título.
+          'Rocket League DB',
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+          textAlign: TextAlign.center,
         ),
         centerTitle: true,
       ),
       body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 1500), // Duración de la animación (1.5 segundos).
-        switchInCurve: Curves.easeInOut, // Curva de entrada para la animación.
-        switchOutCurve: Curves.easeInOut, // Curva de salida para la animación.
+        duration: const Duration(milliseconds: 1500),
+        switchInCurve: Curves.easeInOut,
+        switchOutCurve: Curves.easeInOut,
         transitionBuilder: (Widget child, Animation<double> animation) {
-          return FadeTransition(
-            opacity: animation, // Efecto de desvanecimiento (fade) durante la transición.
-            child: child,
-          );
+          return FadeTransition(opacity: animation, child: child);
         },
-        child: isMobile ? buildMobileLayout() : buildDesktopLayout(), // Elige el layout móvil o de escritorio según el tamaño de la pantalla.
+        child: isMobile ? buildMobileLayout(appData) : buildDesktopLayout(appData),
       ),
     );
   }
 
-  // Layout para pantallas móviles
-  Widget buildMobileLayout() {
+  Widget buildMobileLayout(AppData appData) {
     return SingleChildScrollView(
       child: Column(
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
             child: DropdownMenu<String>(
-              initialSelection: selectedCategory, // Muestra la categoría seleccionada.
+              initialSelection: appData.selectedCategory,
               onSelected: (String? value) {
                 if (value != null) {
-                  setState(() {
-                    selectedCategory = value; // Actualiza la categoría seleccionada.
-                    fetchItems(value); // Obtiene los ítems de la nueva categoría.
-                  });
+                  appData.selectCategory(value);
                 }
               },
-              dropdownMenuEntries: categories
-                  .map((category) => DropdownMenuEntry<String>( // Crea un menú desplegable con las categorías.
+              dropdownMenuEntries: appData.categories
+                  .map((category) => DropdownMenuEntry<String>(
                         value: category,
                         label: category,
                       ))
@@ -141,34 +76,34 @@ class _HomePageState extends State<HomePage> {
           Container(
             height: 200,
             color: Colors.grey[200],
-            child: items.isEmpty
-                ? const Center(child: Text('No items found')) // Muestra mensaje si no hay ítems.
+            child: appData.items.isEmpty
+                ? const Center(child: Text('No items found'))
                 : ListView.separated(
-                    itemCount: items.length, // Muestra la lista de ítems.
+                    itemCount: appData.items.length,
                     separatorBuilder: (context, index) {
-                      return const Divider(color: Colors.grey); // Separa los ítems con una línea.
+                      return const Divider(color: Colors.grey);
                     },
                     itemBuilder: (context, index) {
-                      final item = items[index]; // Obtiene el ítem en la posición actual.
+                      final item = appData.items[index];
                       return ListTile(
-                        title: Text(item['name'] ?? 'Unknown Item'), // Muestra el nombre del ítem.
-                        onTap: () => fetchItemDetails(item['id']), // Llama a la función para obtener detalles del ítem.
+                        title: Text(item['name'] ?? 'Unknown Item'),
+                        onTap: () => appData.fetchItemDetails(item['id']),
                       );
                     },
                   ),
           ),
           const SizedBox(height: 16),
-          if (selectedItem != null) // Si un ítem está seleccionado, muestra sus detalles.
+          if (appData.selectedItem != null)
             Column(
               children: [
                 Image.network(
-                  'http://localhost:3000/${selectedItem!['photo']}', // Muestra la imagen del ítem.
+                  'http://localhost:3000/${appData.selectedItem!['photo']}',
                   height: 200,
                   fit: BoxFit.contain,
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  selectedItem!['description'] ?? 'No Description', // Muestra la descripción del ítem.
+                  appData.selectedItem!['description'] ?? 'No Description',
                   style: const TextStyle(
                     fontSize: 14,
                     color: Colors.deepPurple,
@@ -178,15 +113,12 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
-          if (selectedItem == null) // Si no hay un ítem seleccionado, muestra un mensaje.
+          if (appData.selectedItem == null)
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 16.0),
               child: Text(
-                'Select an item to view details', // Mensaje que pide seleccionar un ítem.
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
-                ),
+                'Select an item to view details',
+                style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
             ),
         ],
@@ -194,34 +126,34 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // Layout para pantallas de escritorio
-  Widget buildDesktopLayout() {
+  Widget buildDesktopLayout(AppData appData) {
     return Column(
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.start, // Alinea el dropdown a la izquierda.
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Flexible(
                 child: Container(
-                  child: DropdownMenu<String>(
-                    width: MediaQuery.of(context).size.width * 0.39, // Ajusta el ancho del menú.
-                    initialSelection: selectedCategory,
-                    onSelected: (String? value) {
-                      if (value != null) {
-                        setState(() {
-                          selectedCategory = value; // Actualiza la categoría seleccionada.
-                          fetchItems(value); // Obtiene los ítems de la nueva categoría.
-                        });
-                      }
+                  child: Builder(
+                    builder: (BuildContext context) {
+                      return DropdownMenu<String>(
+                        width: MediaQuery.of(context).size.width * 0.39,
+                        initialSelection: appData.selectedCategory,
+                        onSelected: (String? value) {
+                          if (value != null) {
+                            appData.selectCategory(value);
+                          }
+                        },
+                        dropdownMenuEntries: appData.categories
+                            .map((category) => DropdownMenuEntry<String>(
+                                  value: category,
+                                  label: category,
+                                ))
+                            .toList(),
+                      );
                     },
-                    dropdownMenuEntries: categories
-                        .map((category) => DropdownMenuEntry<String>( // Crea un menú desplegable con las categorías.
-                              value: category,
-                              label: category,
-                            ))
-                        .toList(),
                   ),
                 ),
               ),
@@ -231,39 +163,34 @@ class _HomePageState extends State<HomePage> {
         Expanded(
           child: Row(
             children: [
-              // Lista de ítems
               Flexible(
                 flex: 2,
                 child: Container(
                   color: Colors.grey[200],
-                  child: items.isEmpty
-                      ? const Center(child: Text('No items found')) // Muestra mensaje si no hay ítems.
+                  child: appData.items.isEmpty
+                      ? const Center(child: Text('No items found'))
                       : ListView.separated(
-                          itemCount: items.length, // Muestra la lista de ítems.
+                          itemCount: appData.items.length,
                           separatorBuilder: (context, index) {
-                            return const Divider(color: Colors.grey); // Separa los ítems con una línea.
+                            return const Divider(color: Colors.grey);
                           },
                           itemBuilder: (context, index) {
-                            final item = items[index];
+                            final item = appData.items[index];
                             return ListTile(
-                              title: Text(item['name'] ?? 'Unknown Item'), // Muestra el nombre del ítem.
-                              onTap: () => fetchItemDetails(item['id']), // Llama a la función para obtener detalles del ítem.
+                              title: Text(item['name'] ?? 'Unknown Item'),
+                              onTap: () => appData.fetchItemDetails(item['id']),
                             );
                           },
                         ),
                 ),
               ),
-              // Detalles del ítem seleccionado
               Flexible(
                 flex: 3,
-                child: selectedItem == null
+                child: appData.selectedItem == null
                     ? const Center(
                         child: Text(
-                          'Select an item to view details', // Mensaje que pide seleccionar un ítem.
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey,
-                          ),
+                          'Select an item to view details',
+                          style: TextStyle(fontSize: 16, color: Colors.grey),
                         ),
                       )
                     : SingleChildScrollView(
@@ -272,13 +199,13 @@ class _HomePageState extends State<HomePage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Image.network(
-                                'http://localhost:3000/${selectedItem!['photo']}', // Muestra la imagen del ítem.
+                                'http://localhost:3000/${appData.selectedItem!['photo']}',
                                 height: 256,
                                 fit: BoxFit.contain,
                               ),
                               const SizedBox(height: 16),
                               Text(
-                                selectedItem!['description'] ?? 'No Description', // Muestra la descripción del ítem.
+                                appData.selectedItem!['description'] ?? 'No Description',
                                 style: const TextStyle(
                                   fontSize: 14,
                                   color: Colors.deepPurple,
