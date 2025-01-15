@@ -4,7 +4,7 @@ import 'app_data.dart'; // Importa tu clase AppData.
 
 void main() => runApp(
       ChangeNotifierProvider(
-        create: (_) => AppData()..fetchCategories(), // Inicializa AppData y carga las categorías desde el inicio.
+        create: (_) => AppData()..fetchCategories(), // Inicializa AppData y carga las categorías.
         child: const RocketLeagueDBApp(),
       ),
     );
@@ -16,8 +16,8 @@ class RocketLeagueDBApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(useMaterial3: true),
-      debugShowCheckedModeBanner: false, // Oculta el banner de depuración.
-      home: const HomePage(), // Página principal de la aplicación.
+      debugShowCheckedModeBanner: false,
+      home: const HomePage(),
     );
   }
 }
@@ -27,8 +27,8 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isMobile = MediaQuery.of(context).size.width < 600; // Determina si es una pantalla móvil.
-    final appData = Provider.of<AppData>(context); // Obtiene la instancia de AppData proporcionada por Provider.
+    final isMobile = MediaQuery.of(context).size.width < 600;
+    final appData = Provider.of<AppData>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -41,14 +41,12 @@ class HomePage extends StatelessWidget {
         centerTitle: true,
       ),
       body: AnimatedSwitcher(
-        // Cambia entre layouts móvil y escritorio con una animación de desvanecimiento.
-        duration: const Duration(milliseconds: 1500), // Duración de la animación.
+        duration: const Duration(milliseconds: 1500),
         switchInCurve: Curves.easeInOut,
         switchOutCurve: Curves.easeInOut,
         transitionBuilder: (Widget child, Animation<double> animation) {
-          return FadeTransition(opacity: animation, child: child); // Efecto de desvanecimiento.
+          return FadeTransition(opacity: animation, child: child);
         },
-        // Cambia entre layouts dependiendo del tamaño de la pantalla.
         child: isMobile ? buildMobileLayout(appData) : buildDesktopLayout(appData),
       ),
     );
@@ -61,14 +59,12 @@ class HomePage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
             child: DropdownMenu<String>(
-              // Menú desplegable para seleccionar una categoría.
-              initialSelection: appData.selectedCategory, 
+              initialSelection: appData.selectedCategory,
               onSelected: (String? value) {
                 if (value != null) {
-                  appData.selectCategory(value); // Cambia la categoría seleccionada.
+                  appData.selectCategory(value);
                 }
               },
-              // Convierte la lista de categorías en entradas para el menú.
               dropdownMenuEntries: appData.categories
                   .map((category) => DropdownMenuEntry<String>(
                         value: category,
@@ -81,9 +77,8 @@ class HomePage extends StatelessWidget {
             height: 200,
             color: Colors.grey[200],
             child: appData.items.isEmpty
-                ? const Center(child: Text('No items found')) // Muestra un mensaje si no hay elementos.
+                ? const Center(child: Text('No items found'))
                 : ListView.separated(
-                    // Lista de elementos con separadores entre ellos.
                     itemCount: appData.items.length,
                     separatorBuilder: (context, index) {
                       return const Divider(color: Colors.grey);
@@ -91,8 +86,8 @@ class HomePage extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final item = appData.items[index];
                       return ListTile(
-                        title: Text(item['name'] ?? 'Unknown Item'), // Nombre del elemento.
-                        onTap: () => appData.fetchItemDetails(item['id']), // Carga detalles al tocar.
+                        title: Text(item['name'] ?? 'Unknown Item'),
+                        onTap: () => appData.fetchItemDetails(item['id']),
                       );
                     },
                   ),
@@ -101,14 +96,12 @@ class HomePage extends StatelessWidget {
           if (appData.selectedItem != null)
             Column(
               children: [
-                // Imagen del elemento seleccionado.
                 Image.network(
                   'http://localhost:3000/${appData.selectedItem!['photo']}',
                   height: 200,
                   fit: BoxFit.contain,
                 ),
                 const SizedBox(height: 16),
-                // Descripción del elemento seleccionado.
                 Text(
                   appData.selectedItem!['description'] ?? 'No Description',
                   style: const TextStyle(
@@ -124,7 +117,7 @@ class HomePage extends StatelessWidget {
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 16.0),
               child: Text(
-                'Select an item to view details', // Mensaje cuando no hay un elemento seleccionado.
+                'Select an item to view details',
                 style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
             ),
@@ -142,20 +135,26 @@ class HomePage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Flexible(
-                child: DropdownMenu<String>(
-                  width: MediaQuery.of(context).size.width * 0.39, // Ancho adaptado al tamaño de pantalla.
-                  initialSelection: appData.selectedCategory, // Selección inicial basada en el estado.
-                  onSelected: (String? value) {
-                    if (value != null) {
-                      appData.selectCategory(value); // Cambia la categoría seleccionada.
-                    }
-                  },
-                  dropdownMenuEntries: appData.categories
-                      .map((category) => DropdownMenuEntry<String>(
-                            value: category,
-                            label: category,
-                          ))
-                      .toList(),
+                child: Container(
+                  child: Builder(
+                    builder: (BuildContext context) {
+                      return DropdownMenu<String>(
+                        width: MediaQuery.of(context).size.width * 0.39,
+                        initialSelection: appData.selectedCategory,
+                        onSelected: (String? value) {
+                          if (value != null) {
+                            appData.selectCategory(value);
+                          }
+                        },
+                        dropdownMenuEntries: appData.categories
+                            .map((category) => DropdownMenuEntry<String>(
+                                  value: category,
+                                  label: category,
+                                ))
+                            .toList(),
+                      );
+                    },
+                  ),
                 ),
               ),
             ],
@@ -169,9 +168,8 @@ class HomePage extends StatelessWidget {
                 child: Container(
                   color: Colors.grey[200],
                   child: appData.items.isEmpty
-                      ? const Center(child: Text('No items found')) // Muestra mensaje si no hay elementos.
+                      ? const Center(child: Text('No items found'))
                       : ListView.separated(
-                          // Lista de elementos con separadores.
                           itemCount: appData.items.length,
                           separatorBuilder: (context, index) {
                             return const Divider(color: Colors.grey);
@@ -180,7 +178,7 @@ class HomePage extends StatelessWidget {
                             final item = appData.items[index];
                             return ListTile(
                               title: Text(item['name'] ?? 'Unknown Item'),
-                              onTap: () => appData.fetchItemDetails(item['id']), // Carga detalles al pulsar.
+                              onTap: () => appData.fetchItemDetails(item['id']),
                             );
                           },
                         ),
@@ -191,7 +189,7 @@ class HomePage extends StatelessWidget {
                 child: appData.selectedItem == null
                     ? const Center(
                         child: Text(
-                          'Select an item to view details', // Mensaje cuando no hay selección.
+                          'Select an item to view details',
                           style: TextStyle(fontSize: 16, color: Colors.grey),
                         ),
                       )
@@ -200,14 +198,12 @@ class HomePage extends StatelessWidget {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              // Imagen del elemento seleccionado.
                               Image.network(
                                 'http://localhost:3000/${appData.selectedItem!['photo']}',
                                 height: 256,
                                 fit: BoxFit.contain,
                               ),
                               const SizedBox(height: 16),
-                              // Descripción del elemento seleccionado.
                               Text(
                                 appData.selectedItem!['description'] ?? 'No Description',
                                 style: const TextStyle(
